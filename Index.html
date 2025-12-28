@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LoL Flash Tracker</title>
+
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background: #121212;
+        color: white;
+        text-align: center;
+        margin: 0;
+        padding: 20px;
+    }
+
+    h1 {
+        margin-bottom: 20px;
+    }
+
+    button {
+        width: 90%;
+        max-width: 300px;
+        height: 60px;
+        margin: 10px auto;
+        font-size: 20px;
+        font-weight: bold;
+        border: none;
+        border-radius: 12px;
+        background: #2c3e50;
+        color: white;
+    }
+
+    button.active {
+        background: #e74c3c;
+    }
+
+    button.ready {
+        background: #2ecc71;
+    }
+</style>
+</head>
+
+<body>
+<h1>Flash Tracker</h1>
+
+<button onclick="startTimer(0)">Top: Flash</button>
+<button onclick="startTimer(1)">Jungle: Flash</button>
+<button onclick="startTimer(2)">Mid: Flash</button>
+<button onclick="startTimer(3)">ADC: Flash</button>
+<button onclick="startTimer(4)">Sup: Flash</button>
+
+<script>
+const FLASH_COOLDOWN = 300;
+const buttons = document.querySelectorAll("button");
+let timers = Array(5).fill(null);
+
+function startTimer(index) {
+    if (timers[index]) {
+        clearInterval(timers[index]);
+        timers[index] = null;
+        buttons[index].textContent = buttons[index].textContent.split(":")[0] + ": Flash";
+        buttons[index].className = "";
+        return;
+    }
+
+    let remaining = FLASH_COOLDOWN;
+    buttons[index].className = "active";
+
+    timers[index] = setInterval(() => {
+        let min = Math.floor(remaining / 60);
+        let sec = remaining % 60;
+        buttons[index].textContent =
+            buttons[index].textContent.split(":")[0] +
+            `: ${String(min).padStart(2, "0")}:${String(sec).padStart(2, "0")}`;
+
+        remaining--;
+
+        if (remaining < 0) {
+            clearInterval(timers[index]);
+            timers[index] = null;
+            buttons[index].textContent =
+                buttons[index].textContent.split(":")[0] + ": READY";
+            buttons[index].className = "ready";
+        }
+    }, 1000);
+}
+</script>
+</body>
+</html>
